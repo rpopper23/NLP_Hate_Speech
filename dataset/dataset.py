@@ -1,6 +1,6 @@
 import pandas as pd
 
-df1 = pd.read_csv("/Users/elia/Desktop/data_hate_speech/2020-12-31-DynamicallyGeneratedHateDataset-entries-v0.1.csv", sep=",")
+df1 = pd.read_csv("dataset/2020-12-31-DynamicallyGeneratedHateDataset-entries-v0.1.csv", sep=",")
 
 tweet1 = df1["text"].to_list()
 label1 = df1["label"].to_list()
@@ -11,7 +11,7 @@ for i in range(len(label1)):
     elif label1[i] == 'nothate':
         label1[i]=0
 
-df2 = pd.read_csv("/Users/elia/Desktop/data_hate_speech/labeled_data.csv", sep=",")
+df2 = pd.read_csv("dataset/labeled_data.csv", sep=",")
 tweet2 = df2["tweet"].to_list()
 label2 = df2["class"].to_list()
 
@@ -23,7 +23,7 @@ for i in range(len(label2)):
     elif label2[i] == 2:
         label2[i] =0
 
-df3 = pd.read_csv("/Users/elia/Desktop/data_hate_speech/train.csv", sep=",")
+df3 = pd.read_csv("dataset/train.csv", sep=",")
 tweet3 = df3["tweet"].to_list()
 label3 = df3["label"].to_list()
 
@@ -35,7 +35,7 @@ df = pd.DataFrame()
 df["label"] = overall_label
 df["tweet"] = overall_tweet
 
-df.to_csv("final_dataset.csv",index=False)
+df.to_csv("dataset/final_dataset.csv",index=False)
 
 h = 0
 nh = 0

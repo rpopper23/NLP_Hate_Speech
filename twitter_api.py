@@ -1,5 +1,4 @@
 import os
-from requests.models import encode_multipart_formdata
 import tweepy as tw
 import pandas as pd
 
@@ -128,19 +127,9 @@ def search_tweet(q):
     
     return df
 
-# df = user("Barack Obama")
-# print(df.user_screen)
+print("ok")
 
-# ts = username(df.user_screen[0],100)
-# print(ts)
-
-
-# zz = search_user_retweet(ts.id[0])
-# for item in zz:
-#     print(user_id(item))
-
-
-hast = ["#peace", "#immigration" ,"#gun"]
+hast = ["#food"]
 
 import timeit
 start = timeit.default_timer()
@@ -149,14 +138,15 @@ tweet_peace = []
 while (diff < 1000000):
     for item in hast:
         ttt = search_tweet(item)
-
-        if item == "#peace":
+        print("ttt")
+        if item == "#food":
             for twit in ttt.text:
                 twit = twit.replace("\n","")
                 tweet_peace.append(twit)
             with open('listfile.txt', 'w') as filehandle:
                 for listitem in tweet_peace:
-                    filehandle.write('%s\n' % listitem)    
+                    listitem = listitem.replace(",","")
+                    filehandle.write('%d,%s \n' % (0,listitem))  
         
     stop = timeit.default_timer()
     diff = stop - start
