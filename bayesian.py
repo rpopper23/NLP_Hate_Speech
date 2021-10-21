@@ -16,7 +16,7 @@ for i in range(10):
     split()
     data = pd.read_csv("dataset/train_hate_speech.csv", sep=",")
 
-    vectorizer = CountVectorizer(analyzer='word', ngram_range=(1, 1))
+    vectorizer = CountVectorizer(analyzer='word', ngram_range=(2, 2))
     X = vectorizer.fit_transform(data.tweet)
 
     y = data["label"].to_list()
