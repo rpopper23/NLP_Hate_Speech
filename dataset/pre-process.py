@@ -9,6 +9,22 @@ from nltk.corpus import stopwords
 import numpy as np
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 analyzer = SentimentIntensityAnalyzer()
+from nltk.stem import WordNetLemmatizer
+
+from nltk.corpus import wordnet
+lemmatizer = WordNetLemmatizer()
+
+def get_wordnet_pos(word):
+    """Map POS tag to first character lemmatize() accepts"""
+    tag = nltk.pos_tag([word])[0][1][0].upper()
+    tag_dict = {"J": wordnet.ADJ,
+                "N": wordnet.NOUN,
+                "V": wordnet.VERB,
+                "R": wordnet.ADV}
+
+    return tag_dict.get(tag, wordnet.NOUN)
+
+
 
 STOPWORDS = set(stopwords.words('english'))
 
@@ -120,8 +136,11 @@ df = df[df.tweet !='']
 
 tweet = []
 for i in range(len(df)):
-   tweet.append(nltk.word_tokenize(df["tweet"].iloc[i]))
+    sentence = df["tweet"].iloc[i]
+    tweet.append([lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(sentence)])
+
 df["tweet"] = tweet
+
 
 df.to_csv('dataset/final_dataset_post.csv',index=False, sep=',', encoding='utf-8', columns=['label', 'tweet','tweet_len','punt','avg_word_len','polarity'])
 
