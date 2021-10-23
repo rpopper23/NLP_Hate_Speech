@@ -133,7 +133,6 @@ def evaluate():
     if step % 50 == 0 and not step == 0:
       
       # Calculate elapsed time in minutes.
-      elapsed = format_time(time.time() - t0)
             
       # Report progress.
       print('  Batch {:>5,}  of  {:>5,}.'.format(step, len(val_dataloader)))
@@ -171,8 +170,7 @@ def evaluate():
 df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
-
-
+df = df[:500000]
 corpus = []
 for i in range(len(df)):
     text = df["tweet"].iloc[i]
@@ -273,7 +271,7 @@ model = model.to(device)
 from transformers import AdamW
 
 # define the optimizer
-optimizer = AdamW(model.parameters(),lr = 1e-5) 
+optimizer = AdamW(model.parameters(),lr = 1e-4) 
 from sklearn.utils.class_weight import compute_class_weight
 
 #compute the class weights
@@ -292,7 +290,7 @@ weights = weights.to(device)
 cross_entropy  = nn.NLLLoss(weight=weights) 
 
 # number of training epochs
-epochs = 10
+epochs = 1
 epochs_stop = int(epochs*0.2)
 best_valid_loss = float('inf')
 
@@ -329,7 +327,7 @@ for epoch in range(epochs):
     if epochs_no_improve >= epochs_stop:
         print("Early Stopping")
         break
-
+torch.cuda.empty_cache()
 path = 'saved_weights.pt'
 model.load_state_dict(torch.load(path))
 
@@ -341,10 +339,9 @@ with torch.no_grad():
 preds = np.argmax(preds, axis = 1)
 
 test_y = test_y.numpy()
-print(test_y)
-
 print(accuracy_score(test_y, preds))
 print(classification_report(test_y, preds))
+
 '''
 SVM with BERT
 '''
