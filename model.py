@@ -8,6 +8,11 @@ import nltk
 import numpy as np
 from nltk.tokenize import TweetTokenizer
 import string
+
+from sklearn.model_selection import train_test_split 
+
+from tqdm import tqdm
+
 tweet_tokenizer = TweetTokenizer()
 
 def tf_idf(corpus):
@@ -43,7 +48,8 @@ def n_grams(corpus):
 df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
 
-df = df[:10000]
+
+df = df[:2000]
 
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
 corpus = []
@@ -51,9 +57,16 @@ for i in range(len(df)):
     text = df["tweet"].iloc[i]
     corpus.append(text)
 
+
+
+
 #X = tf_idf(corpus)
 #X = n_grams(corpus)
 
+# X_train = X[:num_training]
+# X_test = X[num_training:]
+# y_train = df["label"][:num_training]
+# y_test = df["label"][num_training:]
 
 parsed_tweet = []
 
@@ -64,37 +77,29 @@ for info in corpus:
     
     parsed_tweet.append(filtered_sentence)
 
-model = doc2vec(parsed_tweet)
+#model = doc2vec(parsed_tweet)
+# model = word2vec(parsed_tweet)
 
-word2vec_feature = []
-for tweet in parsed_tweet:
-    average_vec = np.zeros(100)
-    for word in tweet:
-        if word in model.wv:
-            average_vec += (model.wv[word] / len(tweet))
-        else:
-            pass
-    word2vec_feature.append(average_vec)
+# word2vec_feature = []
+# for tweet in parsed_tweet:
+#     average_vec = np.zeros(100)
+#     for word in tweet:
+#         if word in model.wv:
+#             average_vec += (model.wv[word] / len(tweet))
+#         else:
+#             pass
+#     word2vec_feature.append(average_vec)
 
 num_training = int(len(df)*0.8)
 
+model = Doc2Vec.load("doc2vec.model")
 
-
-'''
-For td-idf and n-grams
-# X_train = X[:num_training]
-# X_test = X[num_training:]
-# y_train = df["label"][:num_training]
-# y_test = df["label"][num_training:]
-'''
+document_vectors = [model.infer_vector(s) for s in tqdm(parsed_tweet)]
 
 
 
+X_train, X_test, y_train, y_test = train_test_split(document_vectors, df.label,test_size=0.8, random_state=42)
 
-X_train =word2vec_feature[:num_training]
-X_test =word2vec_feature[num_training:]
-y_train = df["label"][:num_training]
-y_test = df["label"][num_training:]
 from sklearn.svm import SVC
 
 print(".....")
