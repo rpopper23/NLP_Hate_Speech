@@ -164,17 +164,18 @@ def evaluate():
   total_preds  = np.concatenate(total_preds, axis=0)
 
   return avg_loss, total_preds
-# specify GPU
 
 
 df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
-df = df[:500000]
+df = df[:500]
 corpus = []
 for i in range(len(df)):
     text = df["tweet"].iloc[i]
     corpus.append(text)
+
+
 
 
 train_text, temp_text, train_labels, temp_labels = train_test_split(corpus, df['label'], 
@@ -255,10 +256,10 @@ val_sampler = SequentialSampler(val_data)
 val_dataloader = DataLoader(val_data, sampler = val_sampler, batch_size=batch_size)
 
 
-for param in bert.parameters():
-    param.requires_grad = False
+#for param in bert.parameters():
+#    param.requires_grad = False
 
-device = torch.device("cuda")
+device = torch.device("cpu")
 
 print(device)
 
@@ -271,7 +272,7 @@ model = model.to(device)
 from transformers import AdamW
 
 # define the optimizer
-optimizer = AdamW(model.parameters(),lr = 1e-4) 
+optimizer = AdamW(model.parameters(),lr = 1e-5) 
 from sklearn.utils.class_weight import compute_class_weight
 
 #compute the class weights
@@ -290,8 +291,8 @@ weights = weights.to(device)
 cross_entropy  = nn.NLLLoss(weight=weights) 
 
 # number of training epochs
-epochs = 1
-epochs_stop = int(epochs*0.2)
+epochs = 20
+epochs_stop = int(epochs*0.1)
 best_valid_loss = float('inf')
 
 # empty lists to store training and validation loss of each epoch
@@ -300,6 +301,7 @@ valid_losses=[]
 
 #for each epoch
 epochs_no_improve = 0
+'''
 for epoch in range(epochs):
      
     print('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
@@ -313,7 +315,7 @@ for epoch in range(epochs):
     #save the best model
     if valid_loss < best_valid_loss:
         best_valid_loss = valid_loss
-        torch.save(model.state_dict(), 'saved_weights.pt')
+        torch.save(model, 'saved_weights.pt')
         epochs_no_improve = 0
     else:
         epochs_no_improve += 1
@@ -327,9 +329,12 @@ for epoch in range(epochs):
     if epochs_no_improve >= epochs_stop:
         print("Early Stopping")
         break
-torch.cuda.empty_cache()
-path = 'saved_weights.pt'
-model.load_state_dict(torch.load(path))
+
+'''
+path = 'saved_weights_5.pt'
+
+
+model = torch.load(path,map_location=torch.device('cpu'))
 
 
 with torch.no_grad():
@@ -342,23 +347,21 @@ test_y = test_y.numpy()
 print(accuracy_score(test_y, preds))
 print(classification_report(test_y, preds))
 
-'''
-SVM with BERT
-'''
-
-#sbert_model = SentenceTransformer('bert-base-nli-mean-tokens')
-
-#sentence_embeddings = sbert_model.encode(corpus)
-
-#X_train, X_test, y_train, y_test = train_test_split(sentence_embeddings, df.label,test_size=0.8, random_state=42)
-
-#from sklearn.svm import SVC
-
-#print(".....")
-#clf = SVC(probability=False, kernel='rbf')
-#clf.fit(X_train, y_train)
 
 
-#y_pred = clf.predict(X_test)
-#from sklearn.metrics import accuracy_score
-#print(accuracy_score(y_test, y_pred))
+
+# sbert_model = SentenceTransformer('bert-base-nli-mean-tokens')
+
+# sentence_embeddings = sbert_model.encode(corpus)
+
+# X_train, X_test, y_train, y_test = train_test_split(sentence_embeddings, df.label,test_size=0.8, random_state=42)
+
+# from sklearn.svm import SVC
+
+# print(".....")
+# clf = SVC(probability=False, kernel='rbf')
+# clf.fit(X_train, y_train)
+
+
+# y_pred = clf.predict(X_test)
+# print(accuracy_score(y_test, y_pred))
