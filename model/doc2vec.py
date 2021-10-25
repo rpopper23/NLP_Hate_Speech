@@ -21,7 +21,7 @@ df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
 
 
-df = df[:3000]
+df = df[:30000]
 
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
 corpus = []

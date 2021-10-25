@@ -14,7 +14,6 @@ def tf_idf(corpus):
 
 df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
-df = df[:2000]
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
 corpus = []
 for i in range(len(df)):
@@ -29,6 +28,7 @@ X_train = X[:num_training]
 X_test = X[num_training:]
 y_train = df["label"][:num_training]
 y_test = df["label"][num_training:]
+
 
 
 print(".....")
