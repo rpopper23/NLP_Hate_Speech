@@ -3,6 +3,8 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
+from sklearn.linear_model import LogisticRegression
+
 
 def tf_idf(corpus):
     vectorizer = TfidfVectorizer()
@@ -12,7 +14,7 @@ def tf_idf(corpus):
 
 df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
-df = df[:20000]
+df = df[:2000]
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
 corpus = []
 for i in range(len(df)):
@@ -33,6 +35,13 @@ print(".....")
 clf = SVC(probability=False, kernel='rbf')
 clf.fit(X_train, y_train)
 
+
+y_pred = clf.predict(X_test)
+print(accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+
+clf = LogisticRegression(random_state=42).fit(X_train, y_train)
 
 y_pred = clf.predict(X_test)
 print(accuracy_score(y_test, y_pred))

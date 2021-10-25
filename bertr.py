@@ -348,18 +348,3 @@ print(classification_report(test_y, preds))
 
 
 
-# sbert_model = SentenceTransformer('bert-base-nli-mean-tokens')
-
-# sentence_embeddings = sbert_model.encode(corpus)
-
-# X_train, X_test, y_train, y_test = train_test_split(sentence_embeddings, df.label,test_size=0.8, random_state=42)
-
-# from sklearn.svm import SVC
-
-# print(".....")
-# clf = SVC(probability=False, kernel='rbf')
-# clf.fit(X_train, y_train)
-
-
-# y_pred = clf.predict(X_test)
-# print(accuracy_score(y_test, y_pred))
