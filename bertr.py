@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 import time
 import pandas as pd
 import numpy as np
-import pandas as pd
 import torch
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
@@ -169,7 +168,6 @@ def evaluate():
 df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
-df = df[:500]
 corpus = []
 for i in range(len(df)):
     text = df["tweet"].iloc[i]
@@ -179,14 +177,14 @@ for i in range(len(df)):
 
 
 train_text, temp_text, train_labels, temp_labels = train_test_split(corpus, df['label'], 
-                                                                    random_state=2018, 
+                                                                    random_state=42, 
                                                                     test_size=0.3, 
                                                                     stratify=df['label'])
 
 
 val_text, test_text, val_labels, test_labels = train_test_split(temp_text, temp_labels, 
-                                                                random_state=2018, 
-                                                                test_size=0.5, 
+                                                                random_state=42, 
+                                                                test_size=0.3, 
                                                                 stratify=temp_labels)
 
 bert = AutoModel.from_pretrained('bert-base-uncased')
@@ -259,7 +257,7 @@ val_dataloader = DataLoader(val_data, sampler = val_sampler, batch_size=batch_si
 #for param in bert.parameters():
 #    param.requires_grad = False
 
-device = torch.device("cpu")
+device = torch.device("cuda")
 
 print(device)
 
@@ -301,7 +299,7 @@ valid_losses=[]
 
 #for each epoch
 epochs_no_improve = 0
-'''
+
 for epoch in range(epochs):
      
     print('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
@@ -315,7 +313,7 @@ for epoch in range(epochs):
     #save the best model
     if valid_loss < best_valid_loss:
         best_valid_loss = valid_loss
-        torch.save(model, 'saved_weights.pt')
+        torch.save(model, 'saved_weights_5.pt')
         epochs_no_improve = 0
     else:
         epochs_no_improve += 1
@@ -330,11 +328,11 @@ for epoch in range(epochs):
         print("Early Stopping")
         break
 
-'''
+
 path = 'saved_weights_5.pt'
 
 
-model = torch.load(path,map_location=torch.device('cpu'))
+model = torch.load(path,map_location=torch.device('cuda'))
 
 
 with torch.no_grad():
