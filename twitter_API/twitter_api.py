@@ -129,24 +129,29 @@ def search_tweet(q):
 
 print("ok")
 
-hast = ["#food"]
+hast = ["#food","#money",'#gun']
 
 import timeit
 start = timeit.default_timer()
 diff = 0
-tweet_peace = []
+
 while (diff < 1000000):
     for item in hast:
+        tweet = []
         ttt = search_tweet(item)
         print("ttt")
-        if item == "#food":
-            for twit in ttt.text:
-                twit = twit.replace("\n","")
-                tweet_peace.append(twit)
-            with open('listfile.txt', 'w') as filehandle:
-                for listitem in tweet_peace:
-                    listitem = listitem.replace(",","")
-                    filehandle.write('%d,%s \n' % (0,listitem))  
+        for twit in ttt.text:
+            twit = twit.replace("\n","")
+            tweet.append(twit)
+        
+        print(len(tweet))
+        name = item + '.txt'
+        with open(name, 'a') as filehandle:
+            for listitem in tweet:
+                listitem = listitem.replace(",","")
+                if 'RT' not in listitem:
+                    if item in listitem:
+                        filehandle.write('%d,%s \n' % (0,listitem))  
         
     stop = timeit.default_timer()
     diff = stop - start

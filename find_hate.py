@@ -53,8 +53,7 @@ class BERT_Arch(nn.Module):
 
       return x
 
-df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
-df=df.sample(frac=1).reset_index(drop=True)
+df = pd.read_csv("/Users/elia/Desktop/NLP_Hate_Speech/gun.csv", sep=",")
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
 
 #df = df[:1000]
@@ -81,11 +80,8 @@ tokens_test = tokenizer.batch_encode_plus(
 
 test_seq = torch.tensor(tokens_test['input_ids'])
 test_mask = torch.tensor(tokens_test['attention_mask'])
-test_y = torch.tensor(df.label.tolist())
 
 
-
-from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
 
 device = torch.device("cpu")
@@ -107,10 +103,13 @@ with torch.no_grad():
 
 preds = np.argmax(preds, axis = 1)
 
-test_y = test_y.numpy()
+print(preds)
+c =0
 
-
-
-print(accuracy_score(test_y, preds))
-print(classification_report(test_y, preds))
+for item in preds:
+  if item == 1:
+      c+=1
+print(c)
+print(c/len(df))
+      
 
