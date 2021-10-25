@@ -13,8 +13,6 @@ from sklearn.model_selection import train_test_split
 
 from tqdm import tqdm
 
-tweet_tokenizer = TweetTokenizer()
-
 def tf_idf(corpus):
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(corpus)
