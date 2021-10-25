@@ -57,7 +57,7 @@ df = pd.read_csv("dataset/final_dataset_post.csv", sep=",")
 df=df.sample(frac=1).reset_index(drop=True)
 df['tweet'] = df['tweet'].str.replace('[^\w\s]','')
 
-df = df[:500]
+df = df[:1000]
 corpus = []
 for i in range(len(df)):
     text = df["tweet"].iloc[i]
